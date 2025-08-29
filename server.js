@@ -802,48 +802,82 @@ app.use('*', async (c, next) => {
     return;
   }
 
-  const filePath = '.' + (c.req.url.pathname === '/' ? '/index.html' : c.req.url.pathname);
   try {
-    const content = await fs.readFile(filePath);
-    const ext = path.extname(filePath).toLowerCase();
-    const contentTypes = {
-      '.html': 'text/html',
-      '.css': 'text/css',
-      '.js': 'application/javascript',
-      '.json': 'application/json',
-      '.png': 'image/png',
-      '.jpg': 'image/jpeg',
-      '.jpeg': 'image/jpeg',
-      '.gif': 'image/gif',
-      '.svg': 'image/svg+xml',
-      '.mp4': 'video/mp4'
-    };
+    // In production, assume files are in wwwroot
+    const basePath = process.env.NODE_ENV === 'production' ? './wwwroot' : '.';
+    const filePath = path.join(basePath, c.req.url.pathname === '/' ? 'index.html' : c.req.url.pathname);
     
-    c.header('Content-Type', contentTypes[ext] || 'application/octet-stream');
-    return c.body(content);
-  } catch (error) {
-    // If file not found, serve index.html for client-side routing
-    if (error.code === 'ENOENT') {
-      try {
-        const content = await fs.readFile('./index.html', 'utf-8');
+    console.log('Attempting to serve file:', filePath);
+    
+    try {
+      const content = await fs.readFile(filePath);
+      const ext = path.extname(filePath).toLowerCase();
+      const contentTypes = {
+        '.html': 'text/html',
+        '.css': 'text/css',
+        '.js': 'application/javascript',
+        '.json': 'application/json',
+        '.png': 'image/png',
+        '.jpg': 'image/jpeg',
+        '.jpeg': 'image/jpeg',
+        '.gif': 'image/gif',
+        '.svg': 'image/svg+xml',
+        '.mp4': 'video/mp4'
+      };
+      
+      c.header('Content-Type', contentTypes[ext] || 'application/octet-stream');
+      return c.body(content);
+    } catch (error) {
+      // If file not found, try serving index.html for client-side routing
+      if (error.code === 'ENOENT') {
+        console.log('File not found, attempting to serve index.html');
+        const indexPath = path.join(basePath, 'index.html');
+        const content = await fs.readFile(indexPath, 'utf-8');
         c.header('Content-Type', 'text/html');
         return c.html(content);
-      } catch (err) {
-        console.error('Error reading index.html:', err);
-        return c.text('Server Error', 500);
       }
+      throw error;
     }
+  } catch (error) {
     console.error('Error serving file:', error);
-    return c.text('Server Error', 500);
+    return c.json({ 
+      error: 'Server Error', 
+      message: error.message,
+      path: c.req.url.pathname
+    }, 500);
   }
 });
 
 const port = process.env.PORT || 8080;
 
-serve({
+// Create necessary directories in production
+if (process.env.NODE_ENV === 'production') {
+  try {
+    await fs.mkdir('./wwwroot', { recursive: true });
+    await fs.mkdir('./wwwroot/videos', { recursive: true });
+    await fs.mkdir('./wwwroot/videos/thumbnails', { recursive: true });
+    console.log('Created necessary directories in production');
+  } catch (error) {
+    console.error('Error creating directories:', error);
+  }
+}
+
+const server = serve({
   fetch: app.fetch,
   port: port,
   hostname: '0.0.0.0'
 });
 
 console.log(`🚀 StreamHub backend server is running on http://0.0.0.0:${port}`);
+
+// Handle shutdown gracefully
+const shutdown = () => {
+  console.log('Shutting down server...');
+  server.close(() => {
+    console.log('Server shut down successfully');
+    process.exit(0);
+  });
+};
+
+process.on('SIGTERM', shutdown);
+process.on('SIGINT', shutdown);
