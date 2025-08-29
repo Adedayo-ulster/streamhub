@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamHub - Video Sharing Platform</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <button class="logo-button" id="homeBtn">
+                <div class="logo-icon">
+                    <i class="fas fa-video"></i>
+                </div>
+                <h1 class="logo-text">StreamHub</h1>
+            </button>
+            
+            <div class="header-actions" id="headerActions">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Error Messages -->
+            <div id="errorMessage" class="error-message hidden"></div>
+            
+            <!-- Signup Form -->
+            <div id="signupForm" class="form-container hidden">
+                <div class="form-card">
+                    <div class="form-header">
+                        <div class="form-title">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Join StreamHub</span>
+                        </div>
+                        <button class="close-btn" id="closeSignup">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <form id="signupFormElement">
+                        <div class="form-group">
+                            <label for="signupUsername">Username</label>
+                            <input type="text" id="signupUsername" placeholder="Enter your username..." required>
+                            <div class="error-text" id="signupUsernameError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="signupEmail">Email</label>
+                            <input type="email" id="signupEmail" placeholder="Enter your email..." required>
+                            <div class="error-text" id="signupEmailError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="signupPassword">Password</label>
+                            <div class="password-input">
+                                <input type="password" id="signupPassword" placeholder="Enter your password..." required>
+                                <button type="button" class="password-toggle" id="signupPasswordToggle">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="error-text" id="signupPasswordError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="signupPasswordConfirm">Confirm Password</label>
+                            <div class="password-input">
+                                <input type="password" id="signupPasswordConfirm" placeholder="Re-enter your password..." required>
+                                <button type="button" class="password-toggle" id="signupPasswordConfirmToggle">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="error-text" id="signupPasswordConfirmError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Account Type</label>
+                            <div class="radio-group">
+                                <div class="radio-option">
+                                    <input type="radio" id="signupViewer" name="signupRole" value="viewer" checked>
+                                    <label for="signupViewer" class="radio-label">
+                                        <i class="fas fa-play"></i>
+                                        <div>
+                                            <div class="option-title">Viewer</div>
+                                            <div class="option-desc">Watch, rate, and comment on videos</div>
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="signupStreamer" name="signupRole" value="streamer">
+                                    <label for="signupStreamer" class="radio-label">
+                                        <i class="fas fa-video"></i>
+                                        <div>
+                                            <div class="option-title">Streamer</div>
+                                            <div class="option-desc">Upload and share your video content</div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <span id="signupBtnText">Join StreamHub</span>
+                            </button>
+                            <button type="button" class="btn btn-outline" id="cancelSignup">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Login Form -->
+            <div id="loginForm" class="form-container hidden">
+                <div class="form-card">
+                    <div class="form-header">
+                        <div class="form-title">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>Login to StreamHub</span>
+                        </div>
+                        <button class="close-btn" id="closeLogin">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <form id="loginFormElement">
+                        <div class="form-group">
+                            <label for="loginEmailUsername">Email or Username</label>
+                            <input type="text" id="loginEmailUsername" placeholder="Enter your email or username..." required>
+                            <div class="error-text" id="loginEmailUsernameError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="loginPassword">Password</label>
+                            <div class="password-input">
+                                <input type="password" id="loginPassword" placeholder="Enter your password..." required>
+                                <button type="button" class="password-toggle" id="loginPasswordToggle">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="error-text" id="loginPasswordError"></div>
+                        </div>
+                        <!-- Role is now automatically detected -->
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <span id="loginBtnText">Login</span>
+                            </button>
+                            <button type="button" class="btn btn-outline" id="cancelLogin">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Video Upload Form -->
+            <div id="uploadForm" class="form-container hidden">
+                <div class="form-card form-card-wide">
+                    <div class="form-header">
+                        <div class="form-title">
+                            <i class="fas fa-upload"></i>
+                            <span>Upload New Video</span>
+                        </div>
+                        <button class="close-btn" id="closeUpload">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <p class="form-subtitle">Share your content with the StreamHub community. You'll be listed as both the publisher and producer.</p>
+                    <form id="uploadFormElement">
+                        <div class="form-group">
+                            <label for="uploadTitle">Video Title</label>
+                            <input type="text" id="uploadTitle" placeholder="Enter video title..." required>
+                        </div>
+                        <div class="form-group">
+                            <label for="uploadDescription">Description</label>
+                            <textarea id="uploadDescription" placeholder="Enter video description..." rows="4" required></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="uploadGenre">Genre</label>
+                                <select id="uploadGenre" required>
+                                    <option value="">Select genre</option>
+                                    <option value="Documentary">Documentary</option>
+                                    <option value="Educational">Educational</option>
+                                    <option value="Technology">Technology</option>
+                                    <option value="Entertainment">Entertainment</option>
+                                    <option value="Music">Music</option>
+                                    <option value="Sports">Sports</option>
+                                    <option value="News">News</option>
+                                    <option value="Comedy">Comedy</option>
+                                    <option value="Drama">Drama</option>
+                                    <option value="Science">Science</option>
+                                    <option value="Gaming">Gaming</option>
+                                    <option value="Lifestyle">Lifestyle</option>
+                                    <option value="Travel">Travel</option>
+                                    <option value="Food">Food</option>
+                                    <option value="Art">Art</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="uploadAgeRating">Age Rating</label>
+                                <select id="uploadAgeRating" required>
+                                    <option value="G">G - General Audiences</option>
+                                    <option value="PG">PG - Parental Guidance</option>
+                                    <option value="PG-13">PG-13 - Parents Strongly Cautioned</option>
+                                    <option value="R">R - Restricted</option>
+                                    <option value="18+">18+ - Adults Only</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="uploadVideo">Video File</label>
+                            <input type="file" id="uploadVideo" accept="video/*" required>
+                            <div id="uploadVideoInfo" class="file-info hidden"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="uploadThumbnail">Thumbnail URL (Optional)</label>
+                            <input type="url" id="uploadThumbnail" placeholder="Enter thumbnail URL or leave blank for auto-generated...">
+                            <div class="helper-text">If left blank, a default thumbnail will be used</div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary btn-wide">
+                                <i class="fas fa-video"></i>
+                                <span id="uploadBtnText">Upload Video</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Video Player -->
+            <div id="videoPlayer" class="hidden">
+                <div class="video-player-header">
+                    <button id="backToVideos" class="back-btn">← Back to Videos</button>
+                </div>
+                <div id="videoPlayerContent">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Main Dashboard -->
+            <div id="mainDashboard">
+                <div class="dashboard-header">
+                    <h2 class="dashboard-title">StreamHub</h2>
+                    <p id="welcomeMessage" class="welcome-message">
+                        Discover amazing video content. Join as a viewer or streamer to get started.
+                    </p>
+                    
+                    <!-- Search Bar -->
+                    <div class="search-container">
+                        <div class="search-input-wrapper">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchInput" placeholder="Search videos..." class="search-input">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-content">
+                    <div class="sidebar">
+                        <div class="stats-card">
+                            <h3 class="stats-title">
+                                <span class="status-dot"></span>
+                                Platform Stats
+                            </h3>
+                            <div class="stats-list" id="platformStats">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                            
+                            <div class="stats-section">
+                                <h4 class="section-title">Platform Roles</h4>
+                                <div class="role-info">
+                                    <div class="role-row">
+                                        <span>Streamer:</span>
+                                        <span class="role-desc">Uploads videos</span>
+                                    </div>
+                                    <div class="role-row">
+                                        <span>Viewer:</span>
+                                        <span class="role-desc">Watches & rates</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="stats-section">
+                                <h4 class="section-title demo-title">Demo Accounts</h4>
+                                <div class="demo-info">
+                                    <div>Email: nature@films.com</div>
+                                    <div>Password: password123</div>
+                                    <div class="demo-note">All accounts use this password</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="main-content-area">
+                        <div id="searchResults" class="search-results hidden">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                        
+                        <div id="videoGrid" class="video-grid">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{
+  "name": "streamhub-backend",
+  "version": "1.0.0",
+  "description": "StreamHub local backend server",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.19.0",
+    "@supabase/supabase-js": "^2.56.0",
+    "dotenv": "^16.6.1",
+    "hono": "^4.9.5",
+    "uuid": "^9.0.1"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
