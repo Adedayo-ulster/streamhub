@@ -18,6 +18,13 @@ let isInitialized = false;
 const initializeStore = async () => {
   if (isInitialized) return;
   
+  if (process.env.NODE_ENV === 'production') {
+    store = {};
+    isInitialized = true;
+    console.log('KV store initialized in-memory for production');
+    return;
+  }
+
   try {
     // Ensure data directory exists
     await fs.mkdir(DATA_DIR, { recursive: true });
@@ -44,6 +51,10 @@ const initializeStore = async () => {
 // Save data to file
 const saveStore = async () => {
   if (!isInitialized) await initializeStore();
+  
+  if (process.env.NODE_ENV === 'production') {
+    return; // Don't save to file in production
+  }
   
   try {
     await fs.writeFile(DATA_FILE, JSON.stringify(store, null, 2));

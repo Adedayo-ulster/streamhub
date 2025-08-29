@@ -29,12 +29,21 @@ app.use('*', async (c, next) => {
 
 // Logger middleware
 app.use('*', async (c, next) => {
-  console.log(`${c.req.method} ${c.req.url.pathname}`);
+  console.log(`[${new Date().toISOString()}] ${c.req.method} ${c.req.url.pathname}`);
   try {
     await next();
   } catch (err) {
-    console.error('Request error:', err);
-    throw err;
+    console.error('Request error:', {
+      message: err.message,
+      stack: err.stack,
+      url: c.req.url.pathname,
+      method: c.req.method
+    });
+    return c.json({ 
+      error: 'Internal Server Error', 
+      message: err.message,
+      path: c.req.url.pathname
+    }, 500);
   }
 });
 
