@@ -829,11 +829,12 @@ app.use('*', async (c, next) => {
   }
 });
 
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 8080;
 
 serve({
   fetch: app.fetch,
   port: port,
+  hostname: '0.0.0.0'
 });
 
-console.log(`🚀 StreamHub backend server is running on http://localhost:${port}`);
+console.log(`🚀 StreamHub backend server is running on http://0.0.0.0:${port}`);
